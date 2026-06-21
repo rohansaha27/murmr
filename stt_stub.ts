@@ -19,8 +19,10 @@ export function transcribe(utteranceId: string): STTStream {
     throw new Error(`unknown utterance: ${utteranceId}`)
   }
 
+  const segments = utterance.segments
+
   async function* stream(): AsyncIterable<Segment> {
-    for (const seg of utterance.segments) {
+    for (const seg of segments) {
       // Per-segment latency: 200-800ms
       await new Promise((r) => setTimeout(r, 200 + Math.random() * 600))
       yield seg
