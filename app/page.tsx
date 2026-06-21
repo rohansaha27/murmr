@@ -189,15 +189,15 @@ export default function Page() {
     if (status === "transcribing") endRef.current?.scrollIntoView({ behavior: "smooth" })
   }, [segments, status])
 
-  async function startDictation() {
-    if (!selectedId || status === "transcribing") return
+  async function startDictation(utteranceId: string = selectedId) {
+    if (!utteranceId) return
 
     abortRef.current?.abort()
     const ctrl = new AbortController()
     abortRef.current = ctrl
 
     setSegments([])
-    setTranscriptId(selectedId)
+    setTranscriptId(utteranceId)
     setShowTranslation(false)
     setTranslationText("")
     setArrivingId(null)
@@ -208,7 +208,7 @@ export default function Page() {
       const res = await fetch("/api/transcribe", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ utteranceId: selectedId }),
+        body: JSON.stringify({ utteranceId }),
         signal: ctrl.signal,
       })
 
@@ -230,6 +230,12 @@ export default function Page() {
       setError("Transcription failed. Please try again.")
       setStatus("idle")
     }
+  }
+
+  function changeUtterance(id: string) {
+    if (id === selectedId) return
+    setSelectedId(id)
+    startDictation(id)
   }
 
   function editSegment(id: string, text: string) {
@@ -308,7 +314,7 @@ export default function Page() {
               <select
                 className="picker-select"
                 value={selectedId}
-                onChange={(e) => setSelectedId(e.target.value)}
+                onChange={(e) => changeUtterance(e.target.value)}
                 disabled={isTranscribing}
                 aria-label="Select utterance"
               >
@@ -353,7 +359,7 @@ export default function Page() {
             <div className="canvas-bar-left">
               <button
                 className={`btn btn-primary${isTranscribing ? " btn-recording" : ""}`}
-                onClick={startDictation}
+                onClick={() => startDictation()}
                 disabled={isTranscribing || !selectedId}
                 aria-busy={isTranscribing}
               >
