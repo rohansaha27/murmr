@@ -234,8 +234,15 @@ export default function Page() {
 
   function changeUtterance(id: string) {
     if (id === selectedId) return
+    abortRef.current?.abort()
     setSelectedId(id)
-    startDictation(id)
+    setSegments([])
+    setTranscriptId(null)
+    setArrivingId(null)
+    setShowTranslation(false)
+    setTranslationText("")
+    setError(null)
+    setStatus("idle")
   }
 
   function editSegment(id: string, text: string) {
