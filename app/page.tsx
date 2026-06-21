@@ -5,18 +5,18 @@ import type { Segment, Transcript, LanguageCode } from "../types"
 
 // ── Language metadata ────────────────────────────────────────────────────────
 
-type LangMeta = { label: string; flag: string; bg: string; text: string; badge: string }
+type LangMeta = { label: string; bg: string; text: string; badge: string }
 
 const LANG_META: Record<string, LangMeta> = {
-  en: { label: "English", flag: "🇺🇸", bg: "rgba(59, 130, 246, 0.15)", text: "#93C5FD", badge: "#3B82F6" },
-  zh: { label: "Mandarin", flag: "🇨🇳", bg: "rgba(239, 68, 68, 0.15)", text: "#FCA5A5", badge: "#EF4444" },
-  es: { label: "Spanish", flag: "🇪🇸", bg: "rgba(245, 158, 11, 0.15)", text: "#FCD34D", badge: "#F59E0B" },
-  hi: { label: "Hindi", flag: "🇮🇳", bg: "rgba(16, 185, 129, 0.15)", text: "#6EE7B7", badge: "#10B981" },
-  fr: { label: "French", flag: "🇫🇷", bg: "rgba(139, 92, 246, 0.15)", text: "#C4B5FD", badge: "#8B5CF6" },
-  ja: { label: "Japanese", flag: "🇯🇵", bg: "rgba(236, 72, 153, 0.15)", text: "#F9A8D4", badge: "#EC4899" },
+  en: { label: "English", bg: "rgba(59, 130, 246, 0.15)", text: "#93C5FD", badge: "#3B82F6" },
+  zh: { label: "Mandarin", bg: "rgba(239, 68, 68, 0.15)", text: "#FCA5A5", badge: "#EF4444" },
+  es: { label: "Spanish", bg: "rgba(245, 158, 11, 0.15)", text: "#FCD34D", badge: "#F59E0B" },
+  hi: { label: "Hindi", bg: "rgba(16, 185, 129, 0.15)", text: "#6EE7B7", badge: "#10B981" },
+  fr: { label: "French", bg: "rgba(139, 92, 246, 0.15)", text: "#C4B5FD", badge: "#8B5CF6" },
+  ja: { label: "Japanese", bg: "rgba(236, 72, 153, 0.15)", text: "#F9A8D4", badge: "#EC4899" },
 }
 
-const FALLBACK_META: LangMeta = { label: "—", flag: "🏳️", bg: "rgba(148, 163, 184, 0.15)", text: "#cbd5e1", badge: "#94a3b8" }
+const FALLBACK_META: LangMeta = { label: "—", bg: "rgba(148, 163, 184, 0.15)", text: "#cbd5e1", badge: "#94a3b8" }
 
 function langMeta(lang: string): LangMeta {
   return LANG_META[lang] ?? FALLBACK_META
@@ -338,7 +338,7 @@ export default function Page() {
                 {TARGET_LANGS.map((code) => {
                   const m = langMeta(code)
                   return (
-                    <option key={code} value={code}>{m.flag} {m.label}</option>
+                    <option key={code} value={code}>{m.label}</option>
                   )
                 })}
               </select>
@@ -378,7 +378,7 @@ export default function Page() {
 
               {isTranscribing && <span className="status-pill live">● Live</span>}
               {showTranslation && (
-                <span className="target-pill">→ {langMeta(targetLang).flag} {langMeta(targetLang).label}</span>
+                <span className="target-pill">→ {langMeta(targetLang).label}</span>
               )}
             </div>
 
