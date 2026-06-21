@@ -143,15 +143,10 @@ function LanguageKey() {
       {(["en", "zh", "es", "hi", "fr", "ja"] as const).map((code) => {
         const m = langMeta(code)
         return (
-          <div key={code} className="lang-key-item">
-            <span
-              className="lang-key-swatch"
-              style={{ backgroundColor: m.bg, color: m.text }}
-            >
-              {badgeText(code)}
-            </span>
-            <span className="lang-key-label">{m.flag} {m.label}</span>
-          </div>
+          <span key={code} className="lang-key-item">
+            <span className="lang-key-dot" style={{ backgroundColor: m.badge }} />
+            {m.label}
+          </span>
         )
       })}
     </section>
