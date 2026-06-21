@@ -245,6 +245,19 @@ export default function Page() {
     setStatus("idle")
   }
 
+  function changeTarget(code: LanguageCode) {
+    if (code === targetLang) return
+    setTargetLang(code)
+    // A shown translation no longer matches the new target — revert to the
+    // transcript so the user re-translates rather than seeing a stale result.
+    if (showTranslation) {
+      abortRef.current?.abort()
+      setShowTranslation(false)
+      setTranslationText("")
+      setStatus("ready")
+    }
+  }
+
   function editSegment(id: string, text: string) {
     setSegments((prev) => prev.map((s) => (s.id === id ? { ...s, text } : s)))
   }
@@ -253,6 +266,10 @@ export default function Page() {
     if (!transcriptId || segments.length === 0 || status === "translating") return
 
     const transcript: Transcript = { id: transcriptId, segments, complete: true }
+
+    abortRef.current?.abort()
+    const ctrl = new AbortController()
+    abortRef.current = ctrl
 
     setShowTranslation(true)
     setTranslationText("")
@@ -264,29 +281,31 @@ export default function Page() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ transcript, target: targetLang }),
+        signal: ctrl.signal,
       })
 
       if (!res.ok) throw new Error(`HTTP ${res.status}`)
 
       for await (const data of readSSE(res)) {
-        if (data === "[DONE]") break
+        if (ctrl.signal.aborted || data === "[DONE]") break
         try {
           const chunk = JSON.parse(data) as string
           setTranslationText((prev) => prev + chunk)
         } catch {}
       }
 
+      if (ctrl.signal.aborted) return
       setStatus("translated")
     } catch (err) {
-      if ((err as Error).name !== "AbortError") {
-        setError("Translation failed. Please try again.")
-        setShowTranslation(false)
-        setStatus("ready")
-      }
+      if ((err as Error).name === "AbortError") return
+      setError("Translation failed. Please try again.")
+      setShowTranslation(false)
+      setStatus("ready")
     }
   }
 
   function undoTranslation() {
+    abortRef.current?.abort()
     setShowTranslation(false)
     setTranslationText("")
     setStatus("ready")
@@ -338,7 +357,7 @@ export default function Page() {
               <select
                 className="picker-select"
                 value={targetLang}
-                onChange={(e) => setTargetLang(e.target.value as LanguageCode)}
+                onChange={(e) => changeTarget(e.target.value as LanguageCode)}
                 disabled={isTranslating}
                 aria-label="Target language"
               >
