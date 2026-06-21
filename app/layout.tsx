@@ -2,7 +2,7 @@ import type { Metadata } from "next"
 import "./globals.css"
 
 export const metadata: Metadata = {
-  title: "Murmr — Multilingual Voice Flow",
+  title: "Murmr",
   description: "Voice transcription that preserves code-switching",
 }
 
