@@ -153,6 +153,86 @@ function LanguageKey() {
   )
 }
 
+// ── Export menu ──────────────────────────────────────────────────────────────
+
+function triggerDownload(name: string, content: string, type: string) {
+  const blob = new Blob([content], { type })
+  const url = URL.createObjectURL(blob)
+  const a = document.createElement("a")
+  a.href = url
+  a.download = name
+  document.body.appendChild(a)
+  a.click()
+  a.remove()
+  URL.revokeObjectURL(url)
+}
+
+interface ExportMenuProps {
+  translation: string
+  payload: unknown
+  baseName: string
+  disabled?: boolean
+}
+
+function ExportMenu({ translation, payload, baseName, disabled }: ExportMenuProps) {
+  const [open, setOpen] = useState(false)
+  const ref = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    if (!open) return
+    function onDown(e: MouseEvent) {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false)
+    }
+    function onKey(e: KeyboardEvent) {
+      if (e.key === "Escape") setOpen(false)
+    }
+    document.addEventListener("mousedown", onDown)
+    document.addEventListener("keydown", onKey)
+    return () => {
+      document.removeEventListener("mousedown", onDown)
+      document.removeEventListener("keydown", onKey)
+    }
+  }, [open])
+
+  return (
+    <div className="export-menu" ref={ref}>
+      <button
+        className="btn btn-ghost"
+        onClick={() => setOpen((o) => !o)}
+        disabled={disabled}
+        aria-haspopup="menu"
+        aria-expanded={open}
+      >
+        Export <span aria-hidden="true">▾</span>
+      </button>
+      {open && (
+        <div className="export-pop" role="menu">
+          <button
+            role="menuitem"
+            className="export-item"
+            onClick={() => {
+              triggerDownload(`${baseName}.json`, JSON.stringify(payload, null, 2), "application/json")
+              setOpen(false)
+            }}
+          >
+            Download JSON
+          </button>
+          <button
+            role="menuitem"
+            className="export-item"
+            onClick={() => {
+              triggerDownload(`${baseName}.txt`, translation, "text/plain")
+              setOpen(false)
+            }}
+          >
+            Download .txt
+          </button>
+        </div>
+      )}
+    </div>
+  )
+}
+
 // ── Main page ────────────────────────────────────────────────────────────────
 
 type Status = "idle" | "transcribing" | "ready" | "translating" | "translated"
@@ -171,6 +251,7 @@ export default function Page() {
   const [targetLang, setTargetLang] = useState<LanguageCode>("en")
   const [translationText, setTranslationText] = useState<string>("")
   const [showTranslation, setShowTranslation] = useState(false)
+  const [copied, setCopied] = useState(false)
 
   const abortRef = useRef<AbortController | null>(null)
   const endRef = useRef<HTMLDivElement | null>(null)
@@ -311,6 +392,14 @@ export default function Page() {
     setStatus("ready")
   }
 
+  async function copyTranslation() {
+    try {
+      await navigator.clipboard.writeText(translationText)
+      setCopied(true)
+      setTimeout(() => setCopied(false), 1500)
+    } catch {}
+  }
+
   const hasSegments = segments.length > 0
   const isTranscribing = status === "transcribing"
   const isTranslating = status === "translating"
@@ -418,10 +507,37 @@ export default function Page() {
                   <span className="typing-dot" />
                 </div>
               ) : (
-                <p className="translation-text">
-                  {translationText}
-                  {isTranslating && <span className="cursor-blink" aria-hidden="true" />}
-                </p>
+                <div className="translation-view">
+                  {!isTranslating && translationText.length > 0 && (
+                    <button
+                      className="copy-btn"
+                      onClick={copyTranslation}
+                      title="Copy translation"
+                      aria-label="Copy translation"
+                    >
+                      {copied ? (
+                        <>
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                            <path d="M20 6 9 17l-5-5" />
+                          </svg>
+                          Copied
+                        </>
+                      ) : (
+                        <>
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                            <rect x="9" y="9" width="13" height="13" rx="2" />
+                            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+                          </svg>
+                          Copy
+                        </>
+                      )}
+                    </button>
+                  )}
+                  <p className="translation-text">
+                    {translationText}
+                    {isTranslating && <span className="cursor-blink" aria-hidden="true" />}
+                  </p>
+                </div>
               )
             ) : hasSegments ? (
               <div
@@ -469,6 +585,12 @@ export default function Page() {
             <div className="canvas-actions">
               {showTranslation ? (
                 <>
+                  <ExportMenu
+                    translation={translationText}
+                    payload={{ id: transcriptId, target: targetLang, translation: translationText, segments }}
+                    baseName={`murmr-${transcriptId ?? "transcript"}-${targetLang}`}
+                    disabled={isTranslating || translationText.length === 0}
+                  />
                   <button
                     className="btn btn-ghost"
                     onClick={translate}
