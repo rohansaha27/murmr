@@ -1,0 +1,65 @@
+{
+  "utterances": [
+    {
+      "id": "u1",
+      "label": "Chinglish: meeting recap",
+      "segments": [
+        { "id": "s1", "lang": "zh", "text": "我今天", "tMs": 0 },
+        { "id": "s2", "lang": "en", "text": " had a meeting with my manager ", "tMs": 800 },
+        { "id": "s3", "lang": "zh", "text": "然后", "tMs": 2400 },
+        { "id": "s4", "lang": "en", "text": " he said the deadline is next Friday", "tMs": 3000 }
+      ]
+    },
+    {
+      "id": "u2",
+      "label": "Spanglish: weekend plans",
+      "segments": [
+        { "id": "s1", "lang": "en", "text": "So like, ", "tMs": 0 },
+        { "id": "s2", "lang": "es", "text": "este fin de semana", "tMs": 600 },
+        { "id": "s3", "lang": "en", "text": " I'm going to the beach with ", "tMs": 1800 },
+        { "id": "s4", "lang": "es", "text": "mi familia", "tMs": 3400 }
+      ]
+    },
+    {
+      "id": "u3",
+      "label": "Hinglish: ordering food",
+      "segments": [
+        { "id": "s1", "lang": "hi", "text": "मुझे एक", "tMs": 0 },
+        { "id": "s2", "lang": "en", "text": " butter chicken ", "tMs": 700 },
+        { "id": "s3", "lang": "hi", "text": "और थोड़ा सा", "tMs": 1900 },
+        { "id": "s4", "lang": "en", "text": " naan ", "tMs": 3100 },
+        { "id": "s5", "lang": "hi", "text": "ले लेना है", "tMs": 4200 }
+      ]
+    },
+    {
+      "id": "u4",
+      "label": "Franglais: morning workout",
+      "segments": [
+        { "id": "s1", "lang": "fr", "text": "Ce matin j'ai eu", "tMs": 0 },
+        { "id": "s2", "lang": "en", "text": " a really intense workout ", "tMs": 1500 },
+        { "id": "s3", "lang": "fr", "text": "au club de sport", "tMs": 3300 }
+      ]
+    },
+    {
+      "id": "u5",
+      "label": "Chinglish: code review",
+      "segments": [
+        { "id": "s1", "lang": "en", "text": "I looked at the PR and ", "tMs": 0 },
+        { "id": "s2", "lang": "zh", "text": "我觉得", "tMs": 1400 },
+        { "id": "s3", "lang": "en", "text": " the abstraction is leaking. ", "tMs": 2200 },
+        { "id": "s4", "lang": "zh", "text": "比如说", "tMs": 4000 },
+        { "id": "s5", "lang": "en", "text": " the controller knows about the database schema directly.", "tMs": 4800 }
+      ]
+    },
+    {
+      "id": "u6",
+      "label": "Japanese-English: team standup",
+      "segments": [
+        { "id": "s1", "lang": "ja", "text": "おはようございます", "tMs": 0 },
+        { "id": "s2", "lang": "en", "text": " yesterday I finished the auth migration ", "tMs": 1500 },
+        { "id": "s3", "lang": "ja", "text": "問題なく", "tMs": 3800 },
+        { "id": "s4", "lang": "en", "text": " today I'm working on the rate limiter", "tMs": 5000 }
+      ]
+    }
+  ]
+}
