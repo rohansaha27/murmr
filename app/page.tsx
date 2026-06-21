@@ -388,38 +388,6 @@ export default function Page() {
                 <span className="target-pill">→ {langMeta(targetLang).label}</span>
               )}
             </div>
-
-            {showControls && (
-              <div className="canvas-bar-right">
-                {showTranslation ? (
-                  <>
-                    <button
-                      className="btn btn-ghost"
-                      onClick={translate}
-                      disabled={isTranslating}
-                      title="Re-translate with current edits and language"
-                    >
-                      {isTranslating ? "Translating…" : "Re-translate"}
-                    </button>
-                    <button
-                      className="btn btn-danger"
-                      onClick={undoTranslation}
-                      disabled={isTranslating}
-                    >
-                      ↩ Undo
-                    </button>
-                  </>
-                ) : (
-                  <button
-                    className="btn btn-primary"
-                    onClick={translate}
-                    disabled={isTranslating}
-                  >
-                    🌐 Normalize &amp; Translate
-                  </button>
-                )}
-              </div>
-            )}
           </div>
 
           <div className="canvas-body">
@@ -477,6 +445,38 @@ export default function Page() {
               </div>
             )}
           </div>
+
+          {showControls && (
+            <div className="canvas-actions">
+              {showTranslation ? (
+                <>
+                  <button
+                    className="btn btn-ghost"
+                    onClick={translate}
+                    disabled={isTranslating}
+                    title="Re-translate with current edits and language"
+                  >
+                    {isTranslating ? "Translating…" : "Re-translate"}
+                  </button>
+                  <button
+                    className="btn btn-danger"
+                    onClick={undoTranslation}
+                    disabled={isTranslating}
+                  >
+                    ↩ Undo
+                  </button>
+                </>
+              ) : (
+                <button
+                  className="btn btn-primary"
+                  onClick={translate}
+                  disabled={isTranslating}
+                >
+                  🌐 Normalize &amp; Translate
+                </button>
+              )}
+            </div>
+          )}
         </section>
 
         {/* ── Language key ── */}
